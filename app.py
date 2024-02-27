@@ -8,8 +8,6 @@ from forms import YourForm
 import json
 from scrapy import signals
 from scrapy.signalmanager import dispatcher
-from crochet import setup
-setup()
 
 # Load environment variables
 load_dotenv()
@@ -21,14 +19,15 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 # Initialize socketio
 socketio = SocketIO(app)
 
-
-@socketio.on('submit')
-def handle_submit(domain, url):
-    spider_settings = {
+spider_settings = {
         'FEEDS': { "./output/links.jsonl": { "format": "jsonlines", "overwrite": True } }
     }
 
-    process = CrawlerProcess(spider_settings)
+process = CrawlerProcess(spider_settings)
+
+@socketio.on('submit')
+def handle_submit(domain, url):
+    global process_running
     process.crawl(CrawlSpider, domain=domain, url=url)
     dispatcher.connect(emit_result, signal=signals.spider_closed)
     process.start(stop_after_crawl=False)
@@ -56,4 +55,4 @@ def index():
 
 if __name__ == '__main__':
 
-    socketio.run(app, debug=False)
+    socketio.run(app)
