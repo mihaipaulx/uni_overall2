@@ -8,8 +8,9 @@ from forms import YourForm
 import json
 from scrapy import signals
 from scrapy.signalmanager import dispatcher
-from multiprocessing.context import Process
+from multiprocessing import Process
 from functools import partial
+from twisted.internet import reactor, defer
 
 # Load environment variables
 load_dotenv()
@@ -25,26 +26,26 @@ spider_settings = {
         'FEEDS': { "./output/links.jsonl": { "format": "jsonlines", "overwrite": True } }
     }
 
-from multiprocessing.context import Process
-
 def crawl(domain, url):
     crawler = CrawlerProcess(spider_settings)
     crawler.crawl(CrawlSpider, domain=domain, url=url)
     crawler.start(stop_after_crawl=False)
 
+d = defer.Deferred()
+
 @socketio.on('submit')
 def handle_submit(domain, url):
-    # Create a partial function with arguments
-    crawl_partial = partial(crawl, domain, url)
-    
+    dispatcher.connect(emit_result, signal=signals.spider_closed)
     # Create a Process instance with the partial function
-    process = Process(target=crawl_partial)
-    process.start()
-    process.join()
-    # process = CrawlerProcess(spider_settings)
-    # process.crawl(CrawlSpider, domain=domain, url=url)
-    # dispatcher.connect(emit_result, signal=signals.spider_closed)
-    # process.start(stop_after_crawl=False)
+
+
+    process = CrawlerProcess(spider_settings)
+
+    d.addCallback(emit_result)
+
+    process.crawl(CrawlSpider, domain=domain, url=url)
+    
+    reactor.run()
 
 
 def emit_result():
