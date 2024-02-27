@@ -56,11 +56,13 @@
 
 
 import scrapy
+from scrapy import signals
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from urllib.parse import urlparse
 from collections import deque
 from ..items import LinkItem
+from app import socketio
 
 class CrawlSpider(CrawlSpider):
     name = 'uni_crawler'
@@ -70,7 +72,7 @@ class CrawlSpider(CrawlSpider):
         self.allowed_domains = [kwargs.get('domain')]
         self.start_urls = [kwargs.get('url')]
         self.item_count = 0
-        self.max_item_count = 40
+        self.max_item_count = 5
         self.visited_urls = set()  # Set to keep track of visited URLs
         self.queue = deque()  # Queue for BFS
 

@@ -5,7 +5,7 @@ var prevDomain = "";
 function toggleEvent() {
     var url = document.getElementById("textInput").value;
     try {
-        var { hostname: currentDomain } = new URL(url)
+        var currentDomain = (new URL(url)).hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
     } catch(e) {
         currentDomain = ""
     } finally {
