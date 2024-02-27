@@ -11,6 +11,7 @@ from scrapy.signalmanager import dispatcher
 from multiprocessing import Process
 from functools import partial
 from twisted.internet import reactor, defer
+import traceback
 
 # Load environment variables
 load_dotenv()
@@ -31,21 +32,24 @@ def crawl(domain, url):
     crawler.crawl(CrawlSpider, domain=domain, url=url)
     crawler.start(stop_after_crawl=False)
 
-d = defer.Deferred()
 
 @socketio.on('submit')
 def handle_submit(domain, url):
-    dispatcher.connect(emit_result, signal=signals.spider_closed)
-    # Create a Process instance with the partial function
 
+    try:
 
-    process = CrawlerProcess(spider_settings)
+      dispatcher.connect(emit_result, signal=signals.spider_closed)
+      # Create a Process instance with the partial function
 
-    d.addCallback(emit_result)
+      process = CrawlerProcess(spider_settings)
 
-    process.crawl(CrawlSpider, domain=domain, url=url)
-    
-    reactor.run()
+      process.crawl(CrawlSpider, domain=domain, url=url)
+      
+      reactor.run(process)
+
+    except Exception as e:
+      
+      print("ERRORRRRRRRRRRR")
 
 
 def emit_result():
