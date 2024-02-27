@@ -8,6 +8,8 @@ from forms import YourForm
 import json
 from scrapy import signals
 from scrapy.signalmanager import dispatcher
+from multiprocessing.context import Process
+from functools import partial
 
 # Load environment variables
 load_dotenv()
@@ -23,13 +25,26 @@ spider_settings = {
         'FEEDS': { "./output/links.jsonl": { "format": "jsonlines", "overwrite": True } }
     }
 
-process = CrawlerProcess(spider_settings)
+from multiprocessing.context import Process
+
+def crawl(domain, url):
+    crawler = CrawlerProcess(spider_settings)
+    crawler.crawl(CrawlSpider, domain=domain, url=url)
+    crawler.start(stop_after_crawl=False)
 
 @socketio.on('submit')
 def handle_submit(domain, url):
-    process.crawl(CrawlSpider, domain=domain, url=url)
-    dispatcher.connect(emit_result, signal=signals.spider_closed)
-    process.start(stop_after_crawl=False)
+    # Create a partial function with arguments
+    crawl_partial = partial(crawl, domain, url)
+    
+    # Create a Process instance with the partial function
+    process = Process(target=crawl_partial)
+    process.start()
+    process.join()
+    # process = CrawlerProcess(spider_settings)
+    # process.crawl(CrawlSpider, domain=domain, url=url)
+    # dispatcher.connect(emit_result, signal=signals.spider_closed)
+    # process.start(stop_after_crawl=False)
 
 
 def emit_result():
