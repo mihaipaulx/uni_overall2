@@ -27,7 +27,6 @@ process = CrawlerProcess(spider_settings)
 
 @socketio.on('submit')
 def handle_submit(domain, url):
-    global process_running
     process.crawl(CrawlSpider, domain=domain, url=url)
     dispatcher.connect(emit_result, signal=signals.spider_closed)
     process.start(stop_after_crawl=False)
