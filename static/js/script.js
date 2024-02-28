@@ -45,6 +45,11 @@ window.addEventListener("DOMContentLoaded", e => {
         console.error("Socket connection failed:", error);
     });
 
+    socket.on("disconnect", function() {
+        console.log("Socket disconnected.");
+        // Handle disconnection here, such as displaying a message to the user or attempting to reconnect.
+    });
+
     document.getElementById("submit-form").addEventListener("submit", function(e) {
         e.preventDefault()
         toggleEvent(socket);
