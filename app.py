@@ -11,6 +11,11 @@ from scrapy.signalmanager import dispatcher
 from multiprocessing.context import Process
 from functools import partial
 import traceback
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
+
 
 # Load environment variables
 load_dotenv()
