@@ -1,5 +1,7 @@
 window.addEventListener("DOMContentLoaded", e => {
-    const socket = io();
+    const socket = io({
+        transports: ['websocket']
+    });
 
     // Check if the socket is connected before executing further code
     socket.on("connect", function() {
