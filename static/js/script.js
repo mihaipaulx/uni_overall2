@@ -1,6 +1,5 @@
 window.addEventListener("DOMContentLoaded", e => {
     const socket = io({
-        transports: ['websocket'],
         query: { debug: true }
     });
 
@@ -48,8 +47,9 @@ window.addEventListener("DOMContentLoaded", e => {
         console.error("Socket connection failed:", error);
     });
 
-    socket.on("disconnect", function() {
-        console.log("Socket disconnected.");
+    socket.on("disconnect", function(reason, details) {
+        console.log("Socket disconnected, reason: ", reason);
+        console.log("Details: ", details.message, "|", details.description, "|", details,context)
         // Handle disconnection here, such as displaying a message to the user or attempting to reconnect.
     });
 
