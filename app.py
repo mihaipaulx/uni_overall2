@@ -79,7 +79,7 @@ def index():
 
 @socketio.on_error()  # Handles all errors in the socket communication
 def handle_error(e):
-    print("An error occurred:")
+    print("An error occurred:", e)
     print(traceback.format_exc())
 
 if __name__ == '__main__':
