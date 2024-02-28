@@ -10,7 +10,7 @@
 </head>
 <body>
   <div class="container">
-    <form id="submit-form" onsubmit="event.preventDefault(); toggleEvent();">
+    <form id="submit-form">
       {{ form.hidden_tag() }}
       {{ form.text_input(id='textInput') }}<br>
       <button type="submit" id="submit-button"><i class="fa fa-search"></i></button>

@@ -1,23 +1,5 @@
 window.addEventListener("DOMContentLoaded", e => {
-    var socket = io();
-
-    var prevDomain = "";
-
-    function toggleEvent() {
-
-    var url = document.getElementById("textInput").value;
-    try {
-        var currentDomain = (new URL(url)).hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
-    } catch(e) {
-        currentDomain = ""
-    } finally {
-        if (currentDomain !== "" && currentDomain !== prevDomain) {
-            socket.emit('submit', currentDomain, url);
-            console.log("submit");
-            prevDomain = currentDomain
-        }
-    }
-}
+    const socket = io();
 
     // Check if the socket is connected before executing further code
     socket.on("connect", function() {
@@ -62,5 +44,26 @@ window.addEventListener("DOMContentLoaded", e => {
     socket.on("connect_error", function(error) {
         console.error("Socket connection failed:", error);
     });
+
+    document.getElementById("submit-form").addEventListener("submit", function(e) {
+        e.preventDefault()
+        toggleEvent(socket);
+    });
+
 });
 
+function toggleEvent(socket) {
+    var prevDomain = "";
+    var url = document.getElementById("textInput").value;
+    try {
+        var currentDomain = (new URL(url)).hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
+    } catch(e) {
+        currentDomain = ""
+    } finally {
+        if (currentDomain !== "" && currentDomain !== prevDomain) {
+            socket.emit('submit', currentDomain, url);
+            console.log("submit");
+            prevDomain = currentDomain
+        }
+    }
+}
