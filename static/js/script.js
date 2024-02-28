@@ -1,6 +1,24 @@
 window.addEventListener("DOMContentLoaded", e => {
     var socket = io();
 
+    var prevDomain = "";
+
+    function toggleEvent() {
+
+    var url = document.getElementById("textInput").value;
+    try {
+        var currentDomain = (new URL(url)).hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
+    } catch(e) {
+        currentDomain = ""
+    } finally {
+        if (currentDomain !== "" && currentDomain !== prevDomain) {
+            socket.emit('submit', currentDomain, url);
+            console.log("submit");
+            prevDomain = currentDomain
+        }
+    }
+}
+
     // Check if the socket is connected before executing further code
     socket.on("connect", function() {
         // This function will execute once the socket connection is successful
@@ -46,20 +64,3 @@ window.addEventListener("DOMContentLoaded", e => {
     });
 });
 
-var prevDomain = "";
-
-function toggleEvent() {
-
-    var url = document.getElementById("textInput").value;
-    try {
-        var currentDomain = (new URL(url)).hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
-    } catch(e) {
-        currentDomain = ""
-    } finally {
-        if (currentDomain !== "" && currentDomain !== prevDomain) {
-            socket.emit('submit', currentDomain, url);
-            console.log("submit");
-            prevDomain = currentDomain
-        }
-    }
-}
