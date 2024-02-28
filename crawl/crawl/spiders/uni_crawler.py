@@ -62,7 +62,6 @@ from scrapy.spiders import CrawlSpider, Rule
 from urllib.parse import urlparse
 from collections import deque
 from ..items import LinkItem
-from app import socketio
 
 class CrawlSpider(CrawlSpider):
     name = 'uni_crawler'

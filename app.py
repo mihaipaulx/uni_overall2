@@ -10,6 +10,7 @@ from scrapy import signals
 from scrapy.signalmanager import dispatcher
 from multiprocessing.context import Process
 from functools import partial
+import traceback
 
 # Load environment variables
 load_dotenv()
@@ -70,6 +71,11 @@ def emit_result():
 def index():
     form = YourForm()
     return render_template('index.html', form=form)
+
+@socketio.on_error()  # Handles all errors in the socket communication
+def handle_error(e):
+    print("An error occurred:")
+    print(traceback.format_exc())
 
 if __name__ == '__main__':
 
