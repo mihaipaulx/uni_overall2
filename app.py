@@ -40,7 +40,7 @@ def crawl(domain, url):
 
 @socketio.on('submit')
 def handle_submit(domain, url):
-    dispatcher.connect(emit_result, signals.spider_closed)
+    # dispatcher.connect(emit_result, signals.spider_closed)
     crawl_partial = partial(crawl, domain, url)
     print("DON'T IGNORE ME 1")
     # Create a Process instance with the partial function
@@ -70,7 +70,7 @@ def emit_result():
           socketio.emit('spider_closed', data)
           print("SPIDER CLOSED SENT")
       os.remove(file_path)
-  dispatcher.disconnect(emit_result, signals.spider_closed)
+  # dispatcher.disconnect(emit_result, signals.spider_closed)
 
 @app.route('/')
 def index():
@@ -83,5 +83,4 @@ def handle_error(e):
     print(traceback.format_exc())
 
 if __name__ == '__main__':
-
-    socketio.run(app, debug=True)
+  socketio.run(app)
