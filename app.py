@@ -69,7 +69,6 @@ def emit_result():
           data = [json.loads(line) for line in file]
           socketio.emit('spider_closed', data)
           print("SPIDER CLOSED SENT")
-      os.remove(file_path)
   # dispatcher.disconnect(emit_result, signals.spider_closed)
 
 @app.route('/')

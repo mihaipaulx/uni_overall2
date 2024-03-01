@@ -49,8 +49,6 @@ window.addEventListener("DOMContentLoaded", e => {
 
     socket.on("disconnect", function(reason, details) {
         console.log("Socket disconnected, reason: ", reason);
-        console.log("Details: ", details.message, "|", details.description, "|", details,context)
-        // Handle disconnection here, such as displaying a message to the user or attempting to reconnect.
     });
 
     document.getElementById("submit-form").addEventListener("submit", function(e) {
