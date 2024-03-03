@@ -88,7 +88,7 @@ def run_spider(allowed_domains, start_urls):
 
 @socketio.on('submit')
 def handle_submit(allowed_domains, start_urls):
-    # dispatcher.connect(emit_result, signals.spider_closed)
+    dispatcher.connect(emit_result, signals.spider_closed)
     # crawl_partial = partial(crawl, domain, url)
     # print("DON'T IGNORE ME 1")
     # # Create a Process instance with the partial function
@@ -107,7 +107,7 @@ def handle_submit(allowed_domains, start_urls):
     # process.crawl(CrawlSpider, domain=domain, url=url)
     # process.start(stop_after_crawl=False)
 
-    emit_result()
+    # emit_result()
 
 def emit_result():
   print("Emit result fired")
