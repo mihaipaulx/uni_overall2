@@ -116,11 +116,14 @@ def emit_result():
   file_path = os.path.join(os.path.dirname(__file__), 'output', 'links.jsonl')
 
   if os.path.exists(file_path):
-      with open(file_path, 'r') as file:
+    with open(file_path, 'r') as file:
           data = [json.loads(line) for line in file]
           print(data)
           socketio.emit('spider_closed', data)
           print("SPIDER CLOSED SENT")
+        # Delete the contents of the file
+    with open(file_path, 'w'):
+        pass
   # dispatcher.disconnect(emit_result, signals.spider_closed)
 
 @app.route('/')
