@@ -13,6 +13,13 @@ SPIDER_MODULES = ["crawl.spiders"]
 NEWSPIDER_MODULE = "crawl.spiders"
 
 
+FEEDS = {
+   "/output/links.jsonl": {
+      "format": "jsonlines",
+      "overwrite": True
+   }
+}
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "crawl (+http://www.yourdomain.com)"
 
@@ -60,13 +67,14 @@ ROBOTSTXT_OBEY = True
 #    "scrapy.extensions.telnet.TelnetConsole": None,
 #}
 
-MAX_DEPTH = 2
+DEPTH_PRIORITY = 1
+SCHEDULER_DISK_QUEUE = "scrapy.squeues.PickleFifoDiskQueue"
+SCHEDULER_MEMORY_QUEUE = "scrapy.squeues.FifoMemoryQueue"
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    "crawl.pipelines.FilterDepthPipeline": 300,
-   "crawl.pipelines.PrintPipeline": 100,
 }
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

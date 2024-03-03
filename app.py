@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 import scrapy.crawler as crawler
-from crawl.crawl.spiders.uni_crawler import MySpider
+from crawl.crawl.spiders.crawl import MySpider
 from dotenv import load_dotenv
 import os
 from forms import YourForm
@@ -14,10 +14,10 @@ from functools import partial
 import traceback
 import logging
 from scrapy.utils.project import get_project_settings
+import pandas as pd
 
   # Configure logging
 logging.basicConfig(level=logging.ERROR)
-
 
 # Load environment variables
 load_dotenv()
@@ -48,7 +48,7 @@ def f(q, allowed_domains, start_urls):
         settings = get_project_settings()
 
         # Customize spider settings
-        spider_settings = {
+        feed_settings = {
             'FEEDS': {
                 "./output/links.jsonl": {
                     "format": "jsonlines",
@@ -58,7 +58,7 @@ def f(q, allowed_domains, start_urls):
         }
 
         # Update the settings with custom spider settings
-        settings.update(spider_settings)
+        settings.update(feed_settings)
 
         # Initialize CrawlerRunner with custom settings
         runner = crawler.CrawlerRunner(settings)
@@ -88,7 +88,7 @@ def run_spider(allowed_domains, start_urls):
 
 @socketio.on('submit')
 def handle_submit(allowed_domains, start_urls):
-    dispatcher.connect(emit_result, signals.spider_closed)
+    # dispatcher.connect(emit_result, signals.spider_closed)
     # crawl_partial = partial(crawl, domain, url)
     # print("DON'T IGNORE ME 1")
     # # Create a Process instance with the partial function
@@ -107,7 +107,7 @@ def handle_submit(allowed_domains, start_urls):
     # process.crawl(CrawlSpider, domain=domain, url=url)
     # process.start(stop_after_crawl=False)
 
-    # emit_result()
+    emit_result()
 
 def emit_result():
   print("Emit result fired")
@@ -116,14 +116,13 @@ def emit_result():
   file_path = os.path.join(os.path.dirname(__file__), 'output', 'links.jsonl')
 
   if os.path.exists(file_path):
-    with open(file_path, 'r') as file:
-          data = [json.loads(line) for line in file]
-          print(data)
-          socketio.emit('spider_closed', data)
+      with open(file_path, 'r') as file:
+          data = pd.read_json(path_or_buf=file_path, lines=True)
+          json_data = data.to_dict(orient='records')  # Convert DataFrame to a list of dictionaries
+          print("Data", data)
+          print("Json data", json_data)
+          socketio.emit('spider_closed', json_data)
           print("SPIDER CLOSED SENT")
-        # Delete the contents of the file
-    with open(file_path, 'w'):
-        pass
   # dispatcher.disconnect(emit_result, signals.spider_closed)
 
 @app.route('/')
