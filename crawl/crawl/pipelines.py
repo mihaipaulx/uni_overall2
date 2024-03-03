@@ -9,8 +9,18 @@
 from scrapy.exceptions import DropItem
 
 class FilterDepthPipeline:
+    def __init__(self, max_depth=2):
+        self.max_depth = max_depth
+
     def process_item(self, item, spider):
-        if item["depth"] > 2:
-            raise DropItem(f"Item depth ({item['depth']}) is greater than 2")
-        else:
+        if item['depth'] <= self.max_depth:
             return item
+        else:
+            # If the depth exceeds the maximum, you can either drop the item or handle it differently
+            # For now, I'm just dropping the item
+            raise DropItem(f"Depth {item['depth']} exceeds maximum depth of {self.max_depth}")
+
+class PrintPipeline:
+    def process_item(self, item, spider):
+        print(item)
+        return item
