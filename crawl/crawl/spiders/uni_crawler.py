@@ -46,7 +46,7 @@ class MySpider(CrawlSpider):
         if not content_type.startswith('text/html'):
             return  # Skip non-HTML content
 
-        print("Visited url: ", response.url)
+        # print("Visited url: ", response.url)
 
         # Check if any keyword is present in the URL
         for type_, keywords in self.keywords.items():
